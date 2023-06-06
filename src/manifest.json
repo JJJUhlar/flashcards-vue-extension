@@ -1,0 +1,48 @@
+{
+    "manifest_version": 3,
+    "name": "Vue Flashcards",
+    "key": "-----BEGIN PRIVATE KEY-----MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9lvZ6Y2gJV2YpCUJ6p0rgRG/M2OVaKAicqRp+hy63FH0OuJPZimEtDH0Orkho6D70uBcQ9R2+S8itC9ZGl304gIRG4Ky+VvlLef42L5qjU8qDzU7sX/TdtE9hjETFhZx/LNcmI/EmcSGiVM/gYkeWDpBfJ06nytIgcPobJTde8qD4ksRuoYJzf3aaplLRsOovMtcymgytTxf36QK8OQWKY8+VYszygl0z0+nD0rtxglmUuBcB0PBQZDE4k7OxLi483CzvtHjyDbNrWmKrR2nJEPb/bmIfpPrSHJHQ78bnNHA4axQCz9jesXp6EIN6wwZVudTUQUQmgceVyH4dzccPAgMBAAECggEACerPKtjEqj8YTiDjXtodvbx8DVRH2bRKuwh8z83ky4PhWiHymJ23S+12zzaeUrUvXIq9U3rsRYuI9vBYaD89Ysq/i0ZDvah8CDmHQDCzn0PfTeSxR7EUnyedmBCHz73s++64XxDgk5kLCtxH4XNn+OP7I6xr3grAfMecIEu36USjFe9konadMX7Gp3yiWS4E8N/cnZiOuNEXoEqyNyhLkcMYMS+IZ1QFtb8WwGG6rHgaHva0MSb1yeoHwbUrZqJmBzRj/aC9s9mWIPo/9ZtMsCYTtNV53zn8REr+N2+EP5CEKTvnY5VkotNuy0JwTKS6+iKRTcB1Zq+yORjKGDdKyQKBgQDpvAz+bUfaG26B46DFldA1L/Pjojw+jOeArZ6lvmkRUd7Eu64Nl22L4BOS7NNHpGLr6zxo9/vfzke2Of0BtPVdUfcFGRxSTCsGvl4PQ2iwNYRV2BSx40VML2dPWzrQvSeiu22vut4cj1JC3gHorXBVDMjdZI+JEMIwHo5Cjz8dSQKBgQDPpmBrBh+SwS/MVUy6z/G5WT6dukV2Th6zFACSJX01hSyeGhv6y59v+uPcKaPiNON+m8SzadD2NPwoeQZNVluXHGxqaPpy8nS9yLllebkXYpRrRQH92IsU4gNxsoZszhrP+J9nSAw0P1YinIZqx5IeznuLPrmSn/pX2GEcoNx5lwKBgQDJyUqigK/OcW5G/sB2tC7LLDnvJMnD6puWMM3NI4TLqhWbXLgYDcpKPspHRuPkbtvj9vLxYF33yruIa6msxpAp37BVm2ci+ZUPvluv668+qQU1o1XCeYYDDs2u6gDt4s+MIym/06EboPQQvF+Dg/B9zIrA76cnWut65XZFqit/2QKBgESwRa7BfMo/637NLK+TP+PPGL52Mqoa117nm/S8P/nnTsYR3vWMS/Zv6NYYVCTs1+A2yM+MjloTVuJQfnwwt+V5uodMqKRDfciV0HY32Llam7wMPMdqzT8gMIF4y6zMVOQ82wYAOEFEPkr+uhwyXiygow+BtUNCdj5+zkj5EVWLAoGAfqJbpT7TfDKZq7+W4YGQaJt1u/WxxuYiloSroAU6qtYQpdimIpYF5SKn6dFvZkFqMamp8CDzDBRZyDUkyJaH4h/ShnMZaMSEphhBOwpFMQfvOhjPS1/eSns1D9wOQtzSg3WqtVFQe4XFHvnO6VWaixl3GIBWUkbBOMluam2USRc=-----END PRIVATE KEY-----",
+    "description": "AI generated flashcards.",
+    "version": "0.1.0",
+    "oauth2": {
+        "client_id": "972831559816-d2visboj8rcs45s355n4tita9agps1i5.apps.googleusercontent.com",
+        "scopes": [
+            "profile email",
+            "https://www.googleapis.com/auth/userinfo.email"
+        ]
+    },
+    "icons": {
+        "16": "images/icon-16.png",
+        "32": "images/icon-32.png",
+        "48": "images/icon-48.png",
+        "128": "images/icon-128.png"
+    },
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "action": {
+        "default_icon": {
+            "16": "images/icon-16.png",
+            "32": "images/icon-32.png",
+            "48": "images/icon-48.png",
+            "128": "images/icon-128.png"
+        },
+        "default_popup": "index.html"
+    },
+    "permissions": [
+        "activeTab", 
+        "scripting", 
+        "storage", 
+        "contextMenus",
+        "tabs",
+        "identity",
+        "identity.email"
+    ],
+    "host_permissions": [
+        "http://127.0.0.1:5000/*",
+        "<all_urls>",
+        "https://flashcards-server.herokuapp.com/*",
+        "https://flashcards-server.herokuapp.com/api/*"
+    ]
+  }
