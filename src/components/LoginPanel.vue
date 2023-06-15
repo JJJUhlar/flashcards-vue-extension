@@ -19,14 +19,13 @@
                     body: JSON.stringify(
                         this.loginData
                      )}
-                )                
+                )
                 .then((response) => { return response.json() })
                 .then((response: any) => {
                     alert('Logged in!')
                     localStorage.setItem('sessionToken', response.sessionToken)
                     localStorage.setItem('username', response.username)
                     chrome.storage.session.set({'sessionToken': response.sessionToken})
-
                 })
                 .catch(error => {
                     alert('Failed to log in!')

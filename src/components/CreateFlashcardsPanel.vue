@@ -6,6 +6,7 @@ interface Flashcard {
     card_back: string,
     origin: string,
     input: string
+    card_type: string
 }
 
 export default {
@@ -17,7 +18,8 @@ export default {
                 input: "",
                 origin: "",
                 card_front: "",
-                card_back: ""
+                card_back: "",
+                card_type: "default"
             },
             currentCardIndex: 0,
             numberOfCards: 1,
@@ -30,7 +32,8 @@ export default {
                 input: "",
                 origin: "",
                 card_front: "",
-                card_back: ""
+                card_back: "",
+                card_type: "default"
             };
 
             const created_cards = await this.getCards();
@@ -61,23 +64,35 @@ export default {
                     "Authorization": `Bearer ${localStorage.getItem('sessionToken')}`
                 },
                 body: JSON.stringify({
-                    "created_cards": created_cards
+                    "created_cards": created_cards,
+                    "username": localStorage.getItem('username')
                 })
-            }).catch((err: Error)=>{
+            })
+            .then((res)=> {return res.json()})
+            .then((data)=>{
+                if (data.msg === "saved cards!") {
+                    alert('Flashcards saved')
+                } else {
+                    alert(`${data.msg}`)
+                }
+            })
+            .catch((err: Error)=>{
                 console.log(err)
             })
 
-            alert('Flashcards saved')
             await chrome.storage.session.set({ "created_cards": [{input: "",
                 origin: "",
                 card_front: "",
-                card_back: ""}] })            
+                card_back: "",
+                card_type: "default"
+            }] })            
             this.currentCardIndex = 0;
             this.currentCreateFlashcard = {
                 input: "",
                 origin: "",
                 card_front: "",
-                card_back: ""
+                card_back: "",
+                card_type: "default"
             };
             this.numberOfCards = 1;
 
@@ -121,7 +136,9 @@ export default {
                 await chrome.storage.session.set({ "created_cards": [{"input": "",
                                         "origin": "",
                                         "card_front": "",
-                                        "card_back": ""}] })
+                                        "card_back": "",
+                                        "card_type": "default"
+                                    }] })
                 this.currentCardIndex = 0;
             }
             this.updateCurrentCard();
@@ -155,12 +172,16 @@ export default {
                             "input": "",
                             "origin": "",
                             "card_front": "",
-                            "card_back": ""
+                            "card_back": "",
+                            "card_type": "default"
+
                         }] }, () => {resolve([{
                             "input": "",
                             "origin": "",
                             "card_front": "",
-                            "card_back": ""
+                            "card_back": "",
+                            "card_type": "default"
+
                         }] as Flashcard[]);
                         })
                     } else {
