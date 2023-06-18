@@ -43,7 +43,6 @@ export default {
             await chrome.storage.session.set({ "created_cards": created_cards })
             this.currentCardIndex = created_cards.length - 1
             this.updateCardCount()
-            
         },
         async saveFlashcards() {
 
@@ -56,6 +55,8 @@ export default {
                     return
                 }
             }
+            console.log(localStorage.getItem('username'))
+            console.log(localStorage.getItem('sessionToken'))
 
             fetch('https://flashcards-server.herokuapp.com/api/save_cards', {
                 method: "POST",
@@ -67,15 +68,17 @@ export default {
                     "created_cards": created_cards,
                     "username": localStorage.getItem('username')
                 })
-            })
+            })  
             .then((res)=> {return res.json()})
             .then((data)=>{
+                console.log(data)
                 if (data.msg === "saved cards!") {
                     alert('Flashcards saved')
                 } else {
+                    console.log('error saving')
                     alert(`${data.msg}`)
                 }
-            })
+            })  
             .catch((err: Error)=>{
                 console.log(err)
             })
