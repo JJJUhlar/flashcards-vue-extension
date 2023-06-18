@@ -167,6 +167,14 @@ export default {
             cards[this.currentCardIndex].card_back = this.currentCreateFlashcard.card_back
             chrome.storage.session.set({ "created_cards": cards})
         },
+        async handleCreatedCardTypeChange(e: Event) {
+            const target = (<HTMLInputElement>e.target)
+            this.currentCreateFlashcard.card_type = target.value
+            console.log(target, this.currentCreateFlashcard.card_type)
+            // const cards = await this.getCards()
+            // cards[this.currentCardIndex].card_type = this.currentCreateFlashcard.card_type
+            // chrome.storage.session.set({ "created_cards": cards})
+        },
         async getCards(): Promise<Flashcard[]> {
             return new Promise((resolve) => {
                 chrome.storage.session.get('created_cards', (result) => {
@@ -209,27 +217,36 @@ export default {
 <template>
     <h3 v-if="loading">Loading...</h3>
     <h3 >{{ currentCardIndex + 1 }} / {{ numberOfCards }}</h3>
-        <fieldset>
-            
-                <div>
-                    <label for="flashcardPrompt">Question</label>
-                    <textarea id="flashcardPrompt" placeholder="write a flashcard Q here" v-bind:value="currentCreateFlashcard.card_front" @input="handleCreatedCardFrontChange"/>
-                </div>
-                <div>
-                    <label for="flashcardAnswer">Answer</label>
-                    <textarea id="flashcardAnswer" placeholder="answers go here" v-bind:value="currentCreateFlashcard.card_back" @input="handleCreatedCardBackChange"/>
-                </div>
-                <div>
-                    <button @click="previousCard" >Previous</button>
-                    <button @click="nextCard" >Next</button>
-                </div>
-            <button @click="getGeneratedCards">Generate Cards</button>
-            <button @click="saveFlashcards">Save Cards</button>
-            <button @click="deleteCard">Delete Card</button>
-            <button @click="createFlashcard">Add Card</button>
-        </fieldset>
+    <fieldset>
+            <div class="flashcard_field">
+                <label for="flashcardPrompt">Question</label>
+                <textarea id="flashcardPrompt" placeholder="write a flashcard Q here" v-bind:value="currentCreateFlashcard.card_front" @input="handleCreatedCardFrontChange"/>
+            </div>
+            <div class="flashcard_field">
+                <label for="flashcardAnswer">Answer</label>
+                <textarea id="flashcardAnswer" placeholder="answers go here" v-bind:value="currentCreateFlashcard.card_back" @input="handleCreatedCardBackChange"/>
+            </div>
+            <div>
+                <button @click="previousCard" >Previous Card</button>
+                <button @click="nextCard" >Next Card</button>
+            </div>
+        <button @click="saveFlashcards">Save Cards</button>
+        <button @click="deleteCard">Delete Card</button>
+        <button @click="createFlashcard">Add Empty Card</button>
+    </fieldset>
 </template>
 
-<style>
+<style scoped>
+.flashcard_field {
+    display: flex;
+    flex-direction: column;
+}
+.flashcard_field textarea {
+    height: 4rem;
+}
+
+label {
+    line-height: 1.5rem;
+}
 
 </style>
