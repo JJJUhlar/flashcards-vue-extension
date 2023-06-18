@@ -11,7 +11,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.contextMenus.onClicked.addListener(
-	cardMaker
+		cardMaker
 	);
 	
 async function cardMaker (info,tab) {
@@ -42,8 +42,8 @@ async function cardMaker (info,tab) {
 				},
 				body: JSON.stringify(new_input)
 			})
-			.then((response) => {return response.json()})
-			.then((data) => {
+			.then(response => response.json())
+			.then(data => {
 				chrome.storage.session.get('cards', (result) => {
 					if (result.cards) {
 						chrome.storage.session.set({"created_cards": [...result.created_cards, ...data.flashcards] })
@@ -53,13 +53,12 @@ async function cardMaker (info,tab) {
 				})
 				chrome.action.setBadgeText({"text": ""})
 			})
-			.catch((error) => {
+			.catch(error => {
 				chrome.action.setBadgeText({"text": ""})
 			})
 
 		})
-		.catch((error) => {
+		.catch(error => {
 			console.log(error)
 		})
-	
 }
