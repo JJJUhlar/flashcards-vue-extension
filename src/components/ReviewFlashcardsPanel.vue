@@ -132,17 +132,21 @@ export default {
                     "Authorization": `Bearer ${localStorage.getItem('sessionToken')}`
                 }
             })
-            .then((response) => {return response.json()})
+            .then(response => response.json())
             .then(data => {
                 this.loading = false;
-                data.forEach((card: any) => {
-                    this.reviewFlashcards.push(card)
-                });
+                if (data) {
+                    data.forEach((card: any) => {
+                        this.reviewFlashcards.push(card)
+                    });
+                }
             })
             .catch((err: Error)=>{
+                this.loading = false;
                 console.log(err)
             })
         } else {
+            this.loading = false;
             console.log('Not logged in')
         }
     }
@@ -161,7 +165,7 @@ export default {
             </div>
             <label>Answer</label>
             <p :hidden="answerHidden">{{ reviewFlashcards[0].card_back }}</p>
-            <button @click="revealAnswer" >reveal answer</button>
+            <button @click="revealAnswer" v-if="answerHidden">reveal answer</button>
             <div :hidden="answerHidden">
                 <button @click="easyCard">Easy</button>
                 <button @click="dunnoCard">Dunno</button>
@@ -173,5 +177,7 @@ export default {
 </template>
 
 <style>
-
+label {
+    line-height: 1.5rem;
+}
 </style>
