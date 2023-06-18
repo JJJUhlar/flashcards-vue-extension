@@ -90,14 +90,12 @@
 
 
 <template>
-	<header>
-		<img alt="flashcards logo" class="logo" src="./images/icon-64.png" width="64" height="64" />
-	</header>
 	<main>
 		<div v-if="isLoggedIn">
 			<PanelsContainer />
 		</div>
 		<div v-else>
+			<img alt="flashcards logo" class="logo" src="./images/icon-64.png" width="32" height="32" />
 			<button @click="loginSSO">Login</button>
 		</div>
 	</main>
