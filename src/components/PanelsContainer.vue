@@ -28,6 +28,7 @@ export default {
 </script>
 
 <template>
+    <img alt="flashcards logo" class="logo" src="../images/icon-64.png" width="32" height="32" />
     <div>
         <button @click="changeToReviewPanel">Review Flashcards</button>
         <button @click="changeToCreatePanel">Create Flashcards</button>
@@ -40,7 +41,6 @@ export default {
         <h1>Review Cards</h1>
         <ReviewFlashcardsPanel />
     </div>
-
 </template>
 
 <style>
