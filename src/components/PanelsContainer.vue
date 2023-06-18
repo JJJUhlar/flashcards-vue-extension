@@ -29,8 +29,8 @@ export default {
 
 <template>
     <div>
-        <button @click="changeToReviewPanel">Review Panel</button>
-        <button @click="changeToCreatePanel">Create Panel</button>
+        <button @click="changeToReviewPanel">Review Flashcards</button>
+        <button @click="changeToCreatePanel">Create Flashcards</button>
     </div>
     <div v-if="showCreatePanel">
         <h1>Create Cards</h1>
