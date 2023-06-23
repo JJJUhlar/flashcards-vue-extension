@@ -11,6 +11,7 @@
 	const isLoggedIn = ref(false)
 
 	const loadingLogIn = ref(false)
+	const loginStatus = ref("Not logged in")
 
 	chrome.storage.session.get('isLoggedIn')
 		.then((res)=>{
@@ -68,16 +69,16 @@
 					)
 					.then(response=> response.json())
 					.then((response) => {
-						alert('Logged in!')
 						isLoggedIn.value = true;
 						loadingLogIn.value = false
+						loginStatus.value = `${response.username}`
 						localStorage.setItem('sessionToken', response.sessionToken)
 						localStorage.setItem('username', response.username)
 						chrome.storage.session.set({'sessionToken': response.sessionToken})
 						chrome.storage.session.set({'isLoggedIn': true})
 					})
 					.catch(error => {
-						alert('Failed to log in!')
+						loginStatus.value = "Login failed"
 						isLoggedIn.value = false;
 						loadingLogIn.value = false
 						chrome.storage.session.set({'isLoggedIn': false})
@@ -99,6 +100,7 @@
 <template>
 	<main>
 		<img alt="flashcards logo" class="logo" src="./images/icon-64.png" width="32" height="32" />
+		<p class="login-status">{{ loginStatus }}</p>
 		<div v-if="isLoggedIn">
 			<PanelsContainer />
 		</div>
