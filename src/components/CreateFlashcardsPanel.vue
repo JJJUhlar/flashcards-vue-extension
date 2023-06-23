@@ -249,4 +249,7 @@ label {
     line-height: 1.5rem;
 }
 
+textarea {
+    padding: 10px;
+}
 </style>
