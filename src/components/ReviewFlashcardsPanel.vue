@@ -143,11 +143,13 @@ export default {
             })
             .catch((err: Error)=>{
                 this.loading = false;
+                chrome.storage.session.set({'isLoggedIn': false})
                 console.log(err)
             })
         } else {
             this.loading = false;
             console.log('Not logged in')
+            chrome.storage.session.set({'isLoggedIn': false})
         }
     }
 }
@@ -165,7 +167,7 @@ export default {
             </div>
             <label>Answer</label>
             <p :hidden="answerHidden">{{ reviewFlashcards[0].card_back }}</p>
-            <button @click="revealAnswer" v-if="answerHidden">reveal answer</button>
+            <button class="reveal-btn" @click="revealAnswer" v-if="answerHidden">reveal answer</button>
             <div :hidden="answerHidden">
                 <button @click="easyCard">Easy</button>
                 <button @click="dunnoCard">Dunno</button>
@@ -176,8 +178,23 @@ export default {
     </div>
 </template>
 
-<style>
+<style scoped>
 label {
-    line-height: 1.5rem;
+    display: block;
+    line-height: 1rem;
+    font-size: 0.8rem;
 }
+
+fieldset {
+    display: block
+}
+.reveal-btn {
+    display: block;
+}
+
+p {
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
 </style>
