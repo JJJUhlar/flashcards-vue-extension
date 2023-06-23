@@ -7,8 +7,10 @@
 	import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth'
 
 
-
+	
 	const isLoggedIn = ref(false)
+
+	const loadingLogIn = ref(false)
 
 	chrome.storage.session.get('isLoggedIn')
 		.then((res)=>{
@@ -22,6 +24,8 @@
 		})
 
 	async function loginSSO() {
+
+		loadingLogIn.value = true
 
 		chrome.identity.getAuthToken({interactive: true}, token => {
 			if (chrome.runtime.lastError || ! token) {
@@ -66,6 +70,7 @@
 					.then((response) => {
 						alert('Logged in!')
 						isLoggedIn.value = true;
+						loadingLogIn.value = false
 						localStorage.setItem('sessionToken', response.sessionToken)
 						localStorage.setItem('username', response.username)
 						chrome.storage.session.set({'sessionToken': response.sessionToken})
@@ -74,12 +79,14 @@
 					.catch(error => {
 						alert('Failed to log in!')
 						isLoggedIn.value = false;
+						loadingLogIn.value = false
 						chrome.storage.session.set({'isLoggedIn': false})
 						console.log(error)
 					});
 				})
 			})
 			.catch(err => {
+				loadingLogIn.value = false
 				console.log(`SSO ended with an error: ${err}`)
 				alert(`SSO ended with an error: ${err}`)
 			})
@@ -91,12 +98,13 @@
 
 <template>
 	<main>
+		<img alt="flashcards logo" class="logo" src="./images/icon-64.png" width="32" height="32" />
 		<div v-if="isLoggedIn">
 			<PanelsContainer />
 		</div>
 		<div v-else>
-			<img alt="flashcards logo" class="logo" src="./images/icon-64.png" width="32" height="32" />
-			<button @click="loginSSO">Login</button>
+			<h4 v-if="loadingLogIn">Loading...</h4>
+			<button v-else  @click="loginSSO">Login</button>
 		</div>
 	</main>
 </template>
