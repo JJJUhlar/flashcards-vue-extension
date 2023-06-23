@@ -1,39 +1,40 @@
 <script lang="ts">
-    export default {
-        data() {
+export default {
+
+    data() {
             return {
                 loginData: {
-                username: '',
-                password: '',
-            },
-            };
-        },
+                    username: '',
+                    password: '',
+                },
+        };
+    },
 
-        methods: {
-            login() {
-                fetch('https://flashcards-server.herokuapp.com/api/login', {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": 'application/json',
-                    },
-                    body: JSON.stringify(
-                        this.loginData
-                     )}
-                )
-                .then((response) => { return response.json() })
-                .then((response: any) => {
-                    alert('Logged in!')
-                    localStorage.setItem('sessionToken', response.sessionToken)
-                    localStorage.setItem('username', response.username)
-                    chrome.storage.session.set({'sessionToken': response.sessionToken})
-                })
-                .catch(error => {
-                    alert('Failed to log in!')
-                    console.log(error)
-                });
-            },
+    methods: {
+        login() {
+            fetch('https://flashcards-server.herokuapp.com/api/login', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": 'application/json',
+                },
+                body: JSON.stringify(
+                    this.loginData
+                    )}
+            )
+            .then((response) => { return response.json() })
+            .then((response: any) => {
+                alert('Logged in!')
+                localStorage.setItem('sessionToken', response.sessionToken)
+                localStorage.setItem('username', response.username)
+                chrome.storage.session.set({'sessionToken': response.sessionToken})
+            })
+            .catch(error => {
+                alert('Failed to log in!')
+                console.log(error)
+            });
         }
     }
+}
 
 </script>
 
