@@ -35,7 +35,6 @@
         "scripting", 
         "storage", 
         "contextMenus",
-        "tabs",
         "identity",
         "identity.email"
     ],
