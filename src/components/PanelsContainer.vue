@@ -29,19 +29,20 @@ export default {
 
 <template>
     <div>
-        <button @click="changeToReviewPanel">Review Flashcards</button>
-        <button @click="changeToCreatePanel">Create Flashcards</button>
+        <button :class="{active: showReviewPanel}" @click="changeToReviewPanel">Review Flashcards</button>
+        <button :class="{active: showCreatePanel}" @click="changeToCreatePanel">Create Flashcards</button>
     </div>
-    <div v-if="showCreatePanel">
-        <h1>Create Cards</h1>
-        <CreateFlashcardsPanel />
-    </div>
-    <div v-if="showReviewPanel">
-        <h1>Review Cards</h1>
-        <ReviewFlashcardsPanel />
-    </div>
+    <CreateFlashcardsPanel v-if="showCreatePanel"/>    
+    <ReviewFlashcardsPanel v-if="showReviewPanel" />
+
 </template>
 
-<style>
+<style scoped>
+.active {
+background-color: #ff5e5e;
+}
+button {
+background-color: #ff8c8c;
+}
 
 </style>
