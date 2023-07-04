@@ -1,242 +1,155 @@
 
 <script lang="ts">
-
-interface Flashcard {
-    card_front: string,
-    card_back: string,
-    origin: string,
-    input: string
-    card_type: string
-}
+import { Deck, Flashcard } from '../flashcards'
+import Card from './Card.vue'
 
 export default {
-
+    components: {
+        Card
+    },
     data() {
         return {
-            createdFlashcards: [] as Flashcard[],
-            currentCreateFlashcard: {
-                input: "",
-                origin: "",
-                card_front: "",
-                card_back: "",
-                card_type: "default"
-            },
-            currentCardIndex: 0,
-            numberOfCards: 1,
+            deck: new Deck(),
             loading: false,
+            selectedOption: "default"
         }
     },
-    methods: {
-        async createFlashcard() {
-            this.currentCreateFlashcard = {
-                input: "",
-                origin: "",
-                card_front: "",
-                card_back: "",
-                card_type: "default"
-            };
-
-            const created_cards = await this.getCards();
-
-            created_cards.push(this.currentCreateFlashcard)
-            
-            await chrome.storage.session.set({ "created_cards": created_cards })
-            this.currentCardIndex = created_cards.length - 1
-            this.updateCardCount()
-        },
-        async saveFlashcards() {
-
-            const created_cards = await this.getCards();
-            this.currentCreateFlashcard = created_cards[this.currentCardIndex];
-            
-            for (let i = 0; i < created_cards.length; i++) {
-                if (created_cards[i].card_front === "" || created_cards[i].card_back === "") {
-                    alert('Please fill out all flashcards before saving')
-                    return
-                }
-            }
-            console.log(localStorage.getItem('username'))
-            console.log(localStorage.getItem('sessionToken'))
-
-            fetch('https://flashcards-server.herokuapp.com/api/save_cards', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem('sessionToken')}`
-                },
-                body: JSON.stringify({
-                    "created_cards": created_cards,
-                    "username": localStorage.getItem('username')
-                })
-            })  
-            .then((res)=> {return res.json()})
-            .then((data)=>{
-                console.log(data)
-                if (data.msg === "saved cards!") {
-                    alert('Flashcards saved')
-                } else {
-                    console.log('error saving')
-                    alert(`${data.msg}`)
-                }
-            })  
-            .catch((err: Error)=>{
-                console.log(err)
+    created() {
+    
+        getCreatedCards()
+        .then((cards)=>{
+            if (cards) cards.forEach((c)=>{
+                this.deck.addCard(c)
             })
+        })
+        .catch((err)=>{
+            console.error(err)
+        })
 
-            await chrome.storage.session.set({ "created_cards": [{input: "",
-                origin: "",
-                card_front: "",
-                card_back: "",
-                card_type: "default"
-            }] })            
-            this.currentCardIndex = 0;
-            this.currentCreateFlashcard = {
-                input: "",
-                origin: "",
-                card_front: "",
-                card_back: "",
-                card_type: "default"
-            };
-            this.numberOfCards = 1;
-
-        },
-        async nextCard() {
-            
-            const created_cards = await this.getCards();
-            this.currentCreateFlashcard = created_cards[this.currentCardIndex];
-            
-            if (this.currentCardIndex + 1 < created_cards.length) {
-                this.currentCardIndex++;
-                 this.updateCurrentCard();
-            }                        
-
-        },
-        async previousCard() {
-            const created_cards = await this.getCards();
-            this.currentCreateFlashcard = created_cards[this.currentCardIndex];
-            
-            if (this.currentCardIndex > 0) {
-                this.currentCardIndex--;
-                this.updateCurrentCard();
-            }
-
-        },
-        async updateCurrentCard() {
-            const created_cards = await this.getCards();
-            this.currentCreateFlashcard = created_cards[this.currentCardIndex];
-        },
-        async deleteCard() {
-            const created_cards = await this.getCards();
-            if (created_cards.length > 1) {
-                created_cards.splice(this.currentCardIndex, 1)
-                this.currentCardIndex = 0;
+        async function getCreatedCards(): Promise<Flashcard[]> {
+            return new Promise((resolve, reject)=>{
                 try {
-                    await chrome.storage.session.set({ "created_cards": created_cards })
-                } catch (err) {
-                    console.log(err)
+                    chrome.storage.session.get('created_cards')
+                    .then((res)=>{
+                        const cards: Flashcard[] = []
+                        if (res.created_cards) {
+                            res.created_cards.forEach((card)=>{
+                                console.log("created card: ",card)
+
+                                const c = new Flashcard(card.input, card.origin, card.card_front, card.card_back)
+                                cards.push(c)  
+                            })
+                        }
+                        chrome.storage.session.set({"created_cards": []})
+                        resolve(cards)
+                    })
+                    .catch(err=>{
+                        console.error(err)
+                    })
+                } catch(err) {
+                    console.error(err)
                 }
-            } else if (created_cards.length === 1) {
-                await chrome.storage.session.set({ "created_cards": [{"input": "",
-                                        "origin": "",
-                                        "card_front": "",
-                                        "card_back": "",
-                                        "card_type": "default"
-                                    }] })
-                this.currentCardIndex = 0;
-            }
-            this.updateCurrentCard();
-        },
-        async getGeneratedCards() {
-            try {
-                this.getCards()
-            } catch (err) {
-                console.log(err)
-            }
-        },
-        async handleCreatedCardFrontChange(e: Event) {
-            const target = (<HTMLInputElement>e.target)
-            this.currentCreateFlashcard.card_front = target.value
-            const cards = await this.getCards()
-            cards[this.currentCardIndex].card_front = this.currentCreateFlashcard.card_front
-            chrome.storage.session.set({ "created_cards": cards})
-        },
-        async handleCreatedCardBackChange(e: Event) {
-            const target = (<HTMLInputElement>e.target)
-            this.currentCreateFlashcard.card_back = target.value
-            const cards = await this.getCards()
-            cards[this.currentCardIndex].card_back = this.currentCreateFlashcard.card_back
-            chrome.storage.session.set({ "created_cards": cards})
-        },
-        async handleCreatedCardTypeChange(e: Event) {
-            const target = (<HTMLInputElement>e.target)
-            this.currentCreateFlashcard.card_type = target.value
-            console.log(target, this.currentCreateFlashcard.card_type)
-            // const cards = await this.getCards()
-            // cards[this.currentCardIndex].card_type = this.currentCreateFlashcard.card_type
-            // chrome.storage.session.set({ "created_cards": cards})
-        },
-        async getCards(): Promise<Flashcard[]> {
-            return new Promise((resolve) => {
-                chrome.storage.session.get('created_cards', (result) => {
-                    if (!Array.isArray(result.created_cards) || result.created_cards === undefined) {
-                        chrome.storage.session.set({ "created_cards": [{
-                            "input": "",
-                            "origin": "",
-                            "card_front": "",
-                            "card_back": "",
-                            "card_type": "default"
-
-                        }] }, () => {resolve([{
-                            "input": "",
-                            "origin": "",
-                            "card_front": "",
-                            "card_back": "",
-                            "card_type": "default"
-
-                        }] as Flashcard[]);
-                        })
-                    } else {
-                        resolve(result.created_cards as Flashcard[])
-                        this.updateCardCount()
-                    }
-                })
             })
-        },
-        async updateCardCount() {
-            const created_cards: Flashcard[] = await this.getCards()
-            this.numberOfCards = created_cards.length
         }
+
+        async function getStoredDeck():Promise<Deck> {
+            return new Promise((resolve,reject)=>{
+                try {
+                    chrome.storage.session.get('created_deck')
+                        .then((res)=>{
+                            if (res.created_deck) {
+                                console.log('getting saved deck: ', res.created_deck)
+                                resolve(JSON.parse(res.created_deck))
+                            } else {
+                                console.log('Setting empty deck in storage')
+                                const deck = new Deck()
+                                chrome.storage.session.set({"created_deck": JSON.stringify(deck)})
+                            }
+                        })
+                } catch (err) {
+                    console.error(err)
+                    throw err
+                }
+            })
+        }
+
     },
-    mounted () {       
-        this.updateCurrentCard();
-        this.getGeneratedCards();
-    },
+    unmounted() {
+        
+        async function saveStoredDeck(deck: Deck): Promise<void> {
+            return new Promise((resolve,reject)=>{
+                try {
+                    console.log('about to save deck: ', deck)
+                    chrome.storage.session.set({"created_deck": JSON.stringify(deck)}, ()=> {
+                        console.log('saved deck, ', deck)
+                    })
+                } catch (err) {
+                    console.error(err)
+                    throw err
+                }
+            })
+        }
+    }
 }
 </script>
 
+
 <template>
-    <h3 v-if="loading">Loading...</h3>
-    <h3 >{{ currentCardIndex + 1 }} / {{ numberOfCards }}</h3>
-    <fieldset>
-            <div class="flashcard_field">
-                <label for="flashcardPrompt">Question</label>
-                <textarea id="flashcardPrompt" placeholder="write a flashcard Q here" v-bind:value="currentCreateFlashcard.card_front" @input="handleCreatedCardFrontChange"/>
-            </div>
-            <div class="flashcard_field">
-                <label for="flashcardAnswer">Answer</label>
-                <textarea id="flashcardAnswer" placeholder="answers go here" v-bind:value="currentCreateFlashcard.card_back" @input="handleCreatedCardBackChange"/>
-            </div>
-            <div>
-                <button @click="previousCard" >Previous Card</button>
-                <button @click="nextCard" >Next Card</button>
-            </div>
-        <button @click="saveFlashcards">Save Cards</button>
-        <button @click="deleteCard">Delete Card</button>
-        <button @click="createFlashcard">Add Empty Card</button>
-    </fieldset>
+    <div class="change_card_btns">
+        <button class="changeCard" @click="deck.previousCard" >Previous Card</button>
+        <h3 >{{ deck.currentCardIndex + 1 }} / {{ deck.cardCount }}</h3>
+        <button class="changeCard" @click="deck.nextCard" >Next Card</button>
+    </div>
+    <Card :flashcard="deck.currentCard" />
+    <div class="buttons">
+        <button @click="deck.saveCreatedCard">Save Card</button>
+        <button @click="deck.deleteCard">Delete Card</button>
+        <button @click="deck.addNewCard">Add Empty Card</button>
+    </div>
 </template>
 
 <style scoped>
+
+.buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.change_card_btns {
+    display: flex;
+    justify-content: center;
+}
+.changeCard {
+    font-size: 0.8rem;
+    padding: 5px;
+    border: solid 1px lightblue;
+    background-color: azure;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.changeCard:hover {
+    background-color: lightblue;
+}
+
+fieldset {
+    border: none;
+}
+
+select {
+    padding: 5px;
+    border: none;
+    background: lightblue;
+    border-radius: 3px
+}
+
+textarea {
+    padding: 10px;
+    border: none;
+    background: lightblue;
+    border-radius: 3px;
+}
 .flashcard_field {
     display: flex;
     flex-direction: column;
@@ -245,11 +158,25 @@ export default {
     height: 4rem;
 }
 
+.flashcard_field_mcq {
+    display: flex;
+    justify-content: space-around;
+    margin: 5px;
+    align-items: center;
+}
+
 label {
     line-height: 1.5rem;
 }
 
-textarea {
+.spinner {
+    margin: 10px;
     padding: 10px;
 }
+
+.mcq_option {
+    padding: 5px
+}
+
+
 </style>
