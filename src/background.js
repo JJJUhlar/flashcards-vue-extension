@@ -11,8 +11,9 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.contextMenus.onClicked.addListener(
-		cardMaker
-	);
+	cardMaker
+);
+
 	
 async function cardMaker (info,tab) {
 
@@ -31,34 +32,57 @@ async function cardMaker (info,tab) {
 		return
 	}
 
-	chrome.storage.session.get('sessionToken')
-		.then(({sessionToken}) => {
-			chrome.action.setBadgeText({"text": "loading"})
-			fetch('https://flashcards-server.herokuapp.com/api/flashcards', {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"Authorization": `Bearer ${sessionToken}`
-				},
-				body: JSON.stringify(new_input)
-			})
-			.then(response => response.json())
-			.then(data => {
-				chrome.storage.session.get('cards', (result) => {
-					if (result.cards) {
-						chrome.storage.session.set({"created_cards": [...result.created_cards, ...data.flashcards] })
-					} else {
-						chrome.storage.session.set({"created_cards": data.flashcards })
-					}
-				})
-				chrome.action.setBadgeText({"text": ""})
-			})
-			.catch(error => {
-				chrome.action.setBadgeText({"text": ""})
-			})
+	const token = await getToken()
 
+	chrome.action.setBadgeText({"text": "loading"})
+
+	const input_json = JSON.stringify(new_input)
+
+	fetch('https://flashcards-server.herokuapp.com/api/flashcards', {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": `Bearer ${token}`
+		},
+		body: input_json
+	})
+	.then(response => response.json())
+	.then(data => {
+
+		const new_created_cards = data.flashcards
+
+		chrome.storage.session.get('created_cards')
+		.then((res)=>{
+
+			if (res.created_cards) {
+				new_created_cards.concat(res.created_cards)
+			}
+
+			chrome.storage.session.set({'created_cards': new_created_cards})
+			chrome.action.setBadgeText({"text": ""})
 		})
-		.catch(error => {
-			console.log(error)
+		.catch(err=> {
+			chrome.action.setBadgeText({"text": ""})
+			console.error(err)
 		})
+	})
+	.catch(error => {
+
+		chrome.action.setBadgeText({"text": ""})
+	})
 }
+
+async function getToken() {
+	return new Promise((resolve, reject) => {
+		try {
+			chrome.storage.session.get('sessionToken')
+				.then(({sessionToken})=>{
+					resolve(sessionToken)
+			})
+			
+		} catch (error) {
+			console.error(error)
+		}
+	})
+}
+
