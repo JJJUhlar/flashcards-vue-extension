@@ -1,26 +1,16 @@
-# flashcards-vue-extension
+# AI Flashcards browser extension.
 
-This is a rebuild of my previous flashcards extension using Vue 3 and Vite.
+## Problem / Brief
 
+Flashcards and spaced repetition systems are the most efficient way for students, researhcers, and the curious, to learn new subjects. Despite this being well established in research and the help of computerised systems, people tend to under use the technique for several user experience problems:
 
-## Install
+- **Time consuming to produce**: Even if they know that flashcards are the best system for learning a topic, often users don’t use them because they are so time consuming to produce (even though they may take very little time afterwards)
+- **Bias towards simplest to produce content**: Flashcards are underutilised for learning topics outside of language learning, because vocabulary drills are the easiest kind of cards to make.
+- **Stumbling on old content**: When practicing cards over a long period, forgetting the answer to an old prompt can be challenging because the answer on it’s own doesn’t provide enough context or reasoning to remind the user why the answer is what it is. e.g. you forget what “je m’appelle” means in English, but when you read that the answer is ‘My name is’, this doesn’t explain the grammar rules of why this is the case. This is a big problem because it can make using flashcards for long term recall redundant.
 
-The extension is awaiting review in the chrome webstore. For now, you must install manually.
+## Solution
 
-1. Clone and pull the repo.
-2. `cd` into the repo and run `npm install` to install packages and then `npm run build`. You should see the built extension appear in the `dist` folder.
-3. Go to google chrome manage extensions page: [chrome://extensions/](chrome://extensions/) and click 'Load Unpacked.' Navigate to your the `dist` folder where the extension was built. Select this folder.
-4. You should now see the tile appear for Super Flashcards. Enable it and click on the puzzle piece in the top right corner to pin it to the browser bar.
-
-
-## How to use.
-
-1. Currently, you can log in as a test user to demo the functionality. Click on the login panel and use the demo credentials user Test1, password password123.
-2. You may have to wait a couple of minutes for the Heroku server to spin up, so that you can retrieve flashcards to review, and also to use it for generating flashcards.
-
-**Create Flashcards**
-3. You can enter flashcards manually, or highlight any text you want to summarise and right click. Select 'make flashcards for ...' from the context menu. You will see the `loading` badge appear on the flashcards icon in the corner of your browser. When the loading badge disappears it means that the flashcards have been generated (or it failed to connect whoops).
-4. Click on the icon and the create panel to view the  flashcards that have been generated. You can move between them, edit, and delete any cards and then click 'save cards' to add them into your deck of flashcards.
-
-**Review Flashcards**
-5. When reviewing flashcards, click on the review panel. Come up with the answer to each prompt, and then click on `easy` if you got the card right. If you get the card wrong, however, click `dunno`. The page where the card was generated will open in a new tab for you to review the information.
+AI Flashcards extension solves these UX problems in multiple ways:
+1. Use a large language model to generate flashcards quickly and automatically from any text input.
+2. Leverage LLM capabilities to generate a wider variety of prompts and mnemonic devices than was previously feasible in a spaced repetition system. e.g. multiple choice questions, acrostic poems, rhymes, etc.
+3. Track the source material of all flashcards, so that it can be easily and immediately revised whenever something is forgotten.
